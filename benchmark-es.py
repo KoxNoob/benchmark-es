@@ -215,7 +215,7 @@ if sport == 'Football' :
             bench_tempo = pd.DataFrame(data=liste_trj, index=[i for i in operatores])
             bench_final = bench_final.merge(bench_tempo, left_index=True, right_index=True)
         bench_final.columns = tempo_name_foot
-
+        bench_final.loc["Moyenne Compétition"] = bench_final.mean()
         st.table(bench_final)
 
 
@@ -337,6 +337,6 @@ if sport == 'Basketball' :
             bench_tempo = pd.DataFrame(data=liste_trj, index=[i for i in operatores])
             bench_final = bench_final.merge(bench_tempo, left_index=True, right_index=True)
         bench_final.columns = tempo_name_basket
-
+        bench_final.loc["Moyenne Compétition"] = bench_final.mean()
         st.table(bench_final)
 
