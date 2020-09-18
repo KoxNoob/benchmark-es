@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run comparateur-benchmark.py
+web: sh setup.sh && streamlit run benchmark-es.py
