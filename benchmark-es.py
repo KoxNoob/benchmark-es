@@ -3,6 +3,7 @@ import requests
 import time
 from bs4 import BeautifulSoup
 import pandas as pd
+import numpy as np
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0'}
 
@@ -62,7 +63,7 @@ if sport == 'Football' :
     #moyenne = st.checkbox('Faire la moyenne ?')
     lancement = st.button('Lancez le benchmark')
 
-    if lancement :
+    if lancement:
         bench_final = pd.DataFrame(index=[i for i in operatores])
         for division in tempo_url_foot:
             page = requests.get(division, headers=headers)
@@ -215,8 +216,14 @@ if sport == 'Football' :
             bench_tempo = pd.DataFrame(data=liste_trj, index=[i for i in operatores])
             bench_final = bench_final.merge(bench_tempo, left_index=True, right_index=True)
         bench_final.columns = tempo_name_foot
-        bench_final.loc["Moyenne Compétition"] = bench_final.mean()
-        st.table(bench_final)
+        bench_final = bench_final.astype(np.float64)
+        bench_final = bench_final.apply(lambda x: x.replace(0.00, np.nan))
+
+        for competition in bench_final.columns:
+            bench_final.loc['Moyenne Compétition', competition] = round(((bench_final[competition]).sum()) / (
+                    len(bench_final[competition]) - bench_final[competition].isnull().sum()), 2)
+
+        st.table(bench_final.style.format("{:.2f}"))
 
 
 
@@ -337,11 +344,14 @@ if sport == 'Basketball' :
             bench_tempo = pd.DataFrame(data=liste_trj, index=[i for i in operatores])
             bench_final = bench_final.merge(bench_tempo, left_index=True, right_index=True)
         bench_final.columns = tempo_name_basket
-        nb_operateurs = len(bench_final)
-        for compet in bench_final.columns:
-            bench_final[compet].sum()
-            #bench_final.loc['Moyenne compétition', compet] = float((bench_final[compet].sum())) / nb_operateurs
-        st.table(bench_final)
+        bench_final = bench_final.astype(np.float64)
+        bench_final = bench_final.apply(lambda x: x.replace(0.00, np.nan))
+
+        for competition in bench_final.columns:
+            bench_final.loc['Moyenne Compétition', competition] = round(((bench_final[competition]).sum()) / (
+                    len(bench_final[competition]) - bench_final[competition].isnull().sum()), 2)
+
+        st.table(bench_final.style.format("{:.2f}"))
 
 
 
@@ -460,8 +470,14 @@ if sport == 'Tennis':
             bench_tempo = pd.DataFrame(data=liste_trj, index=[i for i in operatores])
             bench_final = bench_final.merge(bench_tempo, left_index=True, right_index=True)
         bench_final.columns = tempo_name_tennis
+        bench_final = bench_final.astype(np.float64)
+        bench_final = bench_final.apply(lambda x: x.replace(0.00, np.nan))
 
-        st.table(bench_final)
+        for competition in bench_final.columns:
+            bench_final.loc['Moyenne Compétition', competition] = round(((bench_final[competition]).sum()) / (
+                    len(bench_final[competition]) - bench_final[competition].isnull().sum()), 2)
+
+        st.table(bench_final.style.format("{:.2f}"))
 
 
 
