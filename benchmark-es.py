@@ -337,6 +337,131 @@ if sport == 'Basketball' :
             bench_tempo = pd.DataFrame(data=liste_trj, index=[i for i in operatores])
             bench_final = bench_final.merge(bench_tempo, left_index=True, right_index=True)
         bench_final.columns = tempo_name_basket
-        bench_final.loc["Moyenne Compétition"] = bench_final.mean()
+        nb_operateurs = len(bench_final)
+        for compet in bench_final.columns:
+            bench_final[compet].sum()
+            #bench_final.loc['Moyenne compétition', compet] = float((bench_final[compet].sum())) / nb_operateurs
         st.table(bench_final)
+
+
+
+
+if sport == 'Tennis':
+    st.markdown(
+        "<h3 style='text-align: center; color: grey; size = 0'>Benchmark Tennis</h3>",
+        unsafe_allow_html=True)
+
+    tempo_url_tennis = ['http://www.elcomparador.com/tenis']
+    tempo_name_tennis = ['Competition en cours']
+    competition_tennis_url = ['http://www.elcomparador.com/tenis']
+    name_tennis = ['Competition en cours']
+
+
+    start_match, end_match = st.select_slider('Choisissez la position des matchs à bencher',
+    options = [i for i in range(25)],
+    value = (0,24))
+
+    # Benchmark
+    #moyenne = st.checkbox('Faire la moyenne ?')
+    lancement = st.button('Lancez le benchmark')
+
+    if lancement :
+        bench_final = pd.DataFrame(index=[i for i in operatores])
+        for division in tempo_url_tennis:
+            page = requests.get(division, headers=headers)
+            soup = BeautifulSoup(page.content, 'html.parser')
+
+            a = start_match*2
+            b = start_match*4
+            c = start_match*6
+            d = start_match*8
+            e = start_match*10
+            f = start_match*12
+            g = start_match*14
+            h = start_match*16
+            j = start_match*18
+            k = start_match*20
+            l = start_match*22
+
+            cote_bet365 = []
+            cote_codere = []
+            cote_willhill = []
+            cote_bwin = []
+            cote_luckia = []
+            cote_sportium = []
+            cote_marathon = []
+            cote_betway = []
+            cote_betsson = []
+            cote_marcaapuestas = []
+            cote_888 = []
+            cote_betfair = []
+
+            for i in range(24 * start_match, 24 * end_match, 1):
+                item = soup.find_all('div', {'class': "impar"})[i].get_text()
+                if item.strip() == '-':
+                    item = '0'
+                if (12 + i) % 12 == 0:
+                    cote_bet365.append(item.strip())
+                elif (12 + i + a) % 13 == 0:
+                    cote_codere.append(item.strip())
+                    a += 1
+                elif (12 + i + b) % 14 == 0:
+                    cote_willhill.append(item.strip())
+                    b += 2
+                elif (12 + i + c) % 15 == 0:
+                    cote_bwin.append(item.strip())
+                    c += 3
+                elif (12 + i + d) % 16 == 0:
+                    cote_luckia.append(item.strip())
+                    d += 4
+                elif (12 + i + e) % 17 == 0:
+                    cote_sportium.append(item.strip())
+                    e += 5
+                elif (12 + i + f) % 18 == 0:
+                    cote_marathon.append(item.strip())
+                    f += 6
+                elif (12 + i + g) % 19 == 0:
+                    cote_betway.append(item.strip())
+                    g += 7
+                elif (12 + i + h) % 20 == 0:
+                    cote_betsson.append(item.strip())
+                    h += 8
+                elif (12 + i + j) % 21 == 0:
+                    cote_marcaapuestas.append(item.strip())
+                    j += 9
+                elif (12 + i + k) % 22 == 0:
+                    cote_888.append(item.strip())
+                    k += 10
+                elif (12 + i + l) % 23 == 0:
+                    cote_betfair.append(item.strip())
+                    l += 11
+
+
+            liste_trj = []
+
+            liste_cotes = [cote_bet365, cote_betfair, cote_marathon, cote_willhill, cote_bwin, cote_luckia, cote_codere,
+                           cote_sportium]
+
+            for liste in liste_cotes:
+                trj_totaux = []
+                trj_moyenne = 0
+                nb_matchs = int(len(liste) / 2)
+                for a in range(nb_matchs):
+                    if float(liste[2 * a]) != 0 and float(liste[2 * a + 1]) != 0 :
+                        trj_totaux.append(float("{:.2f}".format(float(1 / (
+                                    (1 / (float(liste[2 * a]))) + (1 / (float(liste[2 * a + 1])))) * 100))))
+
+                if len(trj_totaux) != 0:
+                    trj_moyenne = "{:.2f}".format(round(sum(trj_totaux) / len(trj_totaux), 2))
+                else:
+                    trj_moyenne = 0
+
+                liste_trj.append(trj_moyenne)
+            bench_tempo = pd.DataFrame(data=liste_trj, index=[i for i in operatores])
+            bench_final = bench_final.merge(bench_tempo, left_index=True, right_index=True)
+        bench_final.columns = tempo_name_tennis
+
+        st.table(bench_final)
+
+
 
