@@ -358,8 +358,8 @@ if sport == 'Tennis':
 
 
     start_match, end_match = st.select_slider('Choisissez la position des matchs à bencher',
-    options = [i for i in range(25)],
-    value = (0,24))
+    options = [i for i in range(51)],
+    value = (0,50))
 
     # Benchmark
     #moyenne = st.checkbox('Faire la moyenne ?')
